@@ -1,0 +1,53 @@
+.ls {
+  width: 240px;
+  height: auto;
+  padding: 20px;
+  background-color: #f9f9f9;
+  overflow-y: auto;
+  box-sizing: border-box;
+  display: flex;
+}
+
+.center {
+  width: calc(70vw - 240px);
+  height: 100vh;
+}
+
+.rs {
+  width: 30vw;
+  height: 100vh;
+  padding: 20px;
+  text-align: left;
+  background-color: rgba(96, 96, 96, 0.5);
+  z-index:10;
+}
+
+.part {
+  background-color: #ccc;
+  border: 1px solid #000;
+}
+
+.outscreen {
+  position: fixed;
+  left: -99999px;
+  top: -99999px;
+  z-index: -10000;
+}
+
+@media only screen and (min-width: 1920px) {
+  .ls {
+    width: 340px;
+    height: 100vh;
+  }
+
+  .center {
+    width: calc(70vw - 340px);
+    height: 100vh;
+  }
+
+  .rs {
+    width: 30vw;
+    height: 100vh;
+  }
+
+}

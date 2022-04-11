@@ -1,12 +1,17 @@
 import axios from 'axios'
 
 class API {
-  constructor(url, method = "POST", headers = {}) {
+  constructor(url, method = "POST", headers = {}, withSession = true) {
     this.url = url
     this.method = method
     let _headers = {
       'Content-Type': 'application/json',
       'dataType': 'json',
+    }
+    if (withSession) {
+      this.headers = { ..._headers, ...headers, sessionid:  import.meta.env.VITE_APP_API_SESSIONID, sessiontp: 'uuid4' }
+    } else {
+      this.headers = { ..._headers, ...headers }
     }
   }
 

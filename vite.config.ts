@@ -13,10 +13,27 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      '/naaag/api': {
-        "target":'http://localhost:9000',
+      '/api/image_editor': {
+        "target": 'http://localhost:9000',
         "rewrite": path => path.replace(/^\/api/, ''),
         "changeOrigin": true
+      },
+
+      '/realBoxApi': {
+        'target': 'https://home.knitup.io',
+        'changeOrigin': true,
+      },
+      '/stripe': {
+        'target': 'https://home.knitup.io',
+        'changeOrigin': true,
+      },
+      '/color_separation': {
+        'target': 'https://liyang-api-beta.explorium.cn',
+        'changeOrigin': true
+      },
+      '/colorsep': {
+        'target': 'https://liyang-api-beta.explorium.cn',
+        'changeOrigin': true
       }
     }
   }

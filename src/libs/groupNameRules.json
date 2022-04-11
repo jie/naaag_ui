@@ -1,0 +1,77 @@
+[{
+    "name": "Front",
+    "mask_url": "",
+    "materials": [{
+        "name": "BODY-F",
+        "has_bg": true,
+        "has_image": true
+      }
+    ]
+  },
+  {
+    "name": "Back",
+    "mask_url": "",
+    "materials": [{
+      "name": "BODY-B",
+      "has_bg": true,
+      "has_image": true
+    }]
+  },
+  {
+    "name": "Left Selve",
+    "mask_url": "",
+    "materials": [{
+      "name": "BODY-SL",
+      "has_bg": true,
+      "has_image": true
+    }]
+  },
+  {
+    "name": "Right Selve",
+    "mask_url": "",
+    "materials": [{
+      "name": "BODY-SR",
+      "has_bg": true,
+      "has_image": true
+    }]
+  },
+  {
+    "name": "Trims",
+    "mask_url": "",
+    "materials": [{
+        "name": "RIB-F",
+        "has_bg": true,
+        "has_image": false
+      },
+      {
+        "name": "FNL",
+        "has_bg": true,
+        "has_image": false
+      },
+      {
+        "name": "TUBULAR-PLACKET",
+        "has_bg": true,
+        "has_image": false
+      },
+      {
+        "name": "BODY-POCKET",
+        "has_bg": true,
+        "has_image": false
+      },
+      {
+        "name": "JSY-POCKET",
+        "has_bg": true,
+        "has_image": false
+      }
+    ]
+  },
+  {
+    "name": "HOOD",
+    "mask_url": "",
+    "materials": [{
+      "name": "BODY-HOOD",
+      "has_bg": true,
+      "has_image": true
+    }]
+  }
+]

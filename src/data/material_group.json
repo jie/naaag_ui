@@ -1,0 +1,83 @@
+[{
+        "mask_url": "/static/material/VCDP2200176-BODY-SR.png",
+        "name": "Body-SR",
+        "seq": 1,
+        "materials": [{
+            "name": "Body-SR",
+            "has_bg": true,
+            "has_image": true
+        }]
+    },
+    {
+        "mask_url": "/static/material/VCDP2200176-BODY-SL.png",
+        "name": "Body-SL",
+        "seq": 1,
+        "materials": [{
+            "name": "Body-SL",
+            "has_bg": true,
+            "has_image": true
+        }]
+    },
+    {
+        "mask_url": "/static/material/VCDP2200176-BODY-B.png",
+        "name": "Back",
+        "seq": 1,
+        "materials": [{
+            "name": "BODY-B",
+            "has_bg": true,
+            "has_image": true
+        }]
+    },
+    {
+        "mask_url": "/static/material/VCDP2200176-BODY-FL.png",
+        "name": "Front L",
+        "seq": 1,
+        "materials": [{
+                "name": "BODY-FR",
+                "has_bg": true,
+                "has_image": true
+            },
+            {
+                "name": "BODY-FL",
+                "has_bg": true,
+                "has_image": true
+            },
+            {
+                "name": "BODY-POCK-R",
+                "has_bg": true,
+                "has_image": false
+            },
+            {
+                "name": "BODY-POCK-L",
+                "has_bg": true,
+                "has_image": false
+            }
+        ]
+    },
+    {
+        "mask_url": "/static/material/VCDP2200176-BODY-FR.png",
+        "name": "Front R",
+        "seq": 1,
+        "materials": [{
+                "name": "BODY-FR",
+                "has_bg": true,
+                "has_image": true
+            },
+            {
+                "name": "BODY-FL",
+                "has_bg": true,
+                "has_image": true
+            },
+            {
+                "name": "BODY-POCK-R",
+                "has_bg": true,
+                "has_image": false
+            },
+            {
+                "name": "BODY-POCK-L",
+                "has_bg": true,
+                "has_image": false
+            }
+        ]
+    }
+]

@@ -127,7 +127,6 @@ const changeColor = async function (params, headers = {}) {
   formData.append("new_material_codes", JSON.stringify(new_material_codes));
 
   let url = `${BaseURL}/change_color`
-
   let config = {
     headers: { ...headers }
   };

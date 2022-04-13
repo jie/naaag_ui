@@ -15,10 +15,11 @@
 
 .rs {
   width: 30vw;
-  height: 100vh;
+  overflow-y: auto;
   padding: 20px;
   text-align: left;
-  background-color: rgba(96, 96, 96, 0.5);
+  border-left: 2px solid #ddd;
+  background-color: #fff;
   z-index:10;
 }
 

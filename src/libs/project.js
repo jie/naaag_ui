@@ -4,10 +4,24 @@ import GroupNameRules from "./groupNameRules.json"
 import MaterialGroup from "./material_group"
 import {getAccessToken, getMaterials} from "@/utils/color_api"
 import {rgb2hex} from "@/utils/image_tools"
+import { toRaw } from '@vue/reactivity';
 
 const FabricColorGroupMapping = {
-  1: 'CT01',
-  'CT01': 1
+  1: 'VN01',
+  'VN01': 1,
+  2: 'CM01',
+  'CM01': 2,
+  3: 'CT01',
+  'CT01': 3,
+  4: 'WL01',
+  'WL01': 4
+}
+
+const FabricNameMapping = {
+  1: 'Recycled Viscose Nylon',
+  2: 'Cashmere',
+  3: 'BCI Cotton',
+  4: 'Total Easy Care Merino Wool'
 }
 
 
@@ -33,6 +47,8 @@ class Project {
     this.material_groups = []
     // all color value name and value
     this.colors = {}
+    // all color codes array
+    this.color_codes = []
     // separated color name
     this.separated_colors = []
     // separated color only color code
@@ -40,21 +56,26 @@ class Project {
   }
 
   getColorByName(name) {
-    return this.colors[name]
+    console.log('name:', name)
+    return toRaw(this.colors[name])
   }
 
   getColorCodeByName(name) {
     return rgb2hex(this.getColorByName[name])
   }
-
-  getSeparatedColorCode() {
+  /* 生成系统分色颜色 */
+  generateSeparatedColorCode(separated_colors) {
     let separated_codes = []
-    this.separated_colors.map((item) => {
-      separated_codes.push(this.getColorCodeByName(item))
+    separated_colors.map((item) => {
+      separated_codes.push(rgb2hex(this.colors[item]))
     })
+    this.separated_colors = separated_colors
     this.separated_codes = separated_codes
   }
-
+  getColorValueByIndex(index) {
+    console.log('value:', this.color_codes[index].value)
+    return rgb2hex(this.color_codes[index].value)
+  }
   async getColors() {
     let tokenRes = await getAccessToken()
     if(!tokenRes.status) {
@@ -71,6 +92,15 @@ class Project {
       return materialsRes
     }
     this.colors = materialsRes.data.material_groups[this.fabric_name]
+    console.log('colors:', this.colors)
+    let color_codes = []
+    Object.keys(this.colors).map((item) => {
+      color_codes.push({
+        name: item,
+        value: this.colors[item]
+      })
+    })
+    this.color_codes = color_codes
     return materialsRes
   }
 

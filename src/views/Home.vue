@@ -33,6 +33,17 @@
             <div class="operate-btn" @click="setUndo">undo</div>
             <div class="operate-btn" @click="setRedo">redo</div>
             <div
+              class="global-colors flex"
+              v-if="project && project.separated_codes"
+            >
+              <div
+                v-for="(item, index) in project.separated_codes"
+                :key="index"
+                class="color-btn"
+                :style="{ backgroundColor: item.value }"
+              ></div>
+            </div>
+            <div
               v-for="(item, index) in materialGroups"
               :key="index"
               :class="{
@@ -244,24 +255,70 @@
                           separation
                         </div>
                       </div>
+                      <div class="flex flex-wrap p-5">
+                        <div
+                          v-if="
+                            materialGroups.length !== 0 &&
+                            materialGroups[materialIndex]
+                              .img_before_separated_src
+                          "
+                        >
+                          before
+                          <img
+                            :src="
+                              materialGroups[materialIndex]
+                                .img_before_separated_src
+                            "
+                            width="200"
+                            alt=""
+                            style="border: 1px solid #000"
+                          />
+                        </div>
+                        <div class="w-5"></div>
+                        <div
+                          v-if="
+                            materialGroups.length !== 0 &&
+                            materialGroups[materialIndex].img_url
+                          "
+                        >
+                          after
+                          <img
+                            :src="materialGroups[materialIndex].img_url"
+                            width="200"
+                            alt=""
+                            style="border: 1px solid #000"
+                          />
+                        </div>
+                      </div>
                     </div>
                     <div class="operate color-panel">
                       <div class="operate-title">Color Separation</div>
                       <div>count: {{ color_count }}</div>
-                      <div class="flex" v-if="project && project.separated_colors">
-                        {{project.separated_colors}}
+                      <div
+                        v-if="
+                          project &&
+                          project.color_codes &&
+                          materialGroups[materialIndex].color_codes
+                        "
+                      >
+                        <color-panel
+                          :ref="`colorPanel-${materialIndex}`"
+                          v-on:set_color="onColorPanelUpdate"
+                        />
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
               <div v-if="operateMaterialStatus === 'colour'">
-                <div class="color-btns">
+                <div class="color-btns" v-if="project && project.color_codes">
                   <div
                     class="color-btn"
-                    v-for="(color, index) in colors"
-                    :key="color.value"
-                    :style="{ 'background-color': color.value }"
+                    v-for="(color, index) in project.color_codes"
+                    :key="index"
+                    :style="{
+                      'background-color': `rgb(${color.value[0]},${color.value[1]},${color.value[2]})`,
+                    }"
                     @click="setBackgroundColor(index)"
                   ></div>
                 </div>
@@ -283,6 +340,7 @@ import Realibox from "@/utils/realibox";
 import CanvasCom from "@/components/canvas-com/index.vue";
 import Project from "@/libs/project";
 import RealiboxAPI from "@/utils/realibox";
+import ColorPanel from "@/components/color_panel.vue";
 
 function getExtName(name) {
   let myName = name.toLowerCase();
@@ -324,6 +382,7 @@ export default defineComponent({
   components: {
     BaseLayout,
     CanvasCom,
+    ColorPanel,
   },
   data() {
     return {
@@ -346,29 +405,7 @@ export default defineComponent({
         appkey: import.meta.env.VITE_APP_REALIBOX_APPKEY,
         secret: import.meta.env.VITE_APP_REALIBOX_SECRET,
       },
-      colors: [
-        {
-          name: "black",
-          value: "#000000",
-        },
-        {
-          name: "red",
-          value: "#e81e25",
-        },
-        {
-          name: "blue",
-          value: "#1d6a96",
-        },
-        {
-          name: "green",
-          value: "#028c6a",
-        },
-        {
-          name: "yellow",
-          value: "#f2dd66",
-        },
-      ],
-      colorCount: 5
+      colorCount: 3,
     };
   },
   async mounted() {
@@ -380,7 +417,6 @@ export default defineComponent({
     }
 
     await this.searchProject();
-
     if (this.project_id) {
       await this.generateProject();
     }
@@ -454,10 +490,10 @@ export default defineComponent({
       return this.imageSettings[this.materialIndex];
     },
     async onUploadFileChange(e) {
-      let imgURL = window.URL.createObjectURL(e.target.files[0]);
+      let image_url = window.URL.createObjectURL(e.target.files[0]);
       let extname = getExtName(e.target.files[0].name);
       let image = new Image();
-      image.src = imgURL;
+      image.src = image_url;
       image.onload = async () => {
         console.log("currentSettings:", this.curSettings());
         var curSetting = this.curSettings();
@@ -466,13 +502,47 @@ export default defineComponent({
       };
       this.upload_images.push({
         canvas: `canvas-com-${this.materialIndex}`,
-        imgFile: imgURL,
+        imgFile: image_url,
       });
-      this.myCanvas().onUploadFileChange(imgURL);
-      this.imageSettings[this.materialIndex].image = imgURL;
+      this.myCanvas().onUploadFileChange(image_url);
+      this.imageSettings[this.materialIndex].image = image_url;
       this.imageSettings[this.materialIndex].imageFile = e.target.files[0];
+      await this.generateImageColorSeparation(e.target.files[0], image_url);
       document.getElementById("btn_file").value = "";
-      console.log("imageURL:", this.imageSettings[this.materialIndex].image);
+    },
+    async generateImageColorSeparation(image_file, image_url) {
+      let materialGroup = this.materialGroups[this.materialIndex];
+      let colorRes = await materialGroup.requestColorSeparation(
+        this.colorCount,
+        image_file
+      );
+      materialGroup.updateMaterialColors(colorRes);
+      materialGroup.img_before_separated_src = image_url;
+      materialGroup.img_url = colorRes.data.image_url;
+      materialGroup.separated_img_key = colorRes.data.image_key;
+      this.$refs[`colorPanel-${this.materialIndex}`].initColors(
+        materialGroup.color_codes,
+        this.project.color_codes,
+        this.project.colors
+      );
+    },
+    async onColorPanelUpdate(e) {
+      console.log(e);
+      let materialGroup = this.materialGroups[this.materialIndex];
+      let result = await materialGroup.requestChangeColor(
+        materialGroup.separated_img_key,
+        e.color_codes_obj
+      );
+
+      this.$refs[`colorPanel-${this.materialIndex}`].initColors(
+        materialGroup.color_codes,
+        this.project.color_codes,
+        this.project.colors,
+        materialGroup.changed_codes
+      );
+
+      console.log('result:', result)
+      this.$forceUpdate()
     },
     setOperateProperties(e) {
       console.log(e);
@@ -531,8 +601,10 @@ export default defineComponent({
       this.upload_images = [];
     },
     setBackgroundColor(index) {
-      this.imageSettings[index].backgroundColor = index;
-      this.myCanvas().addBackgroundColor(this.colors[index].value);
+      this.imageSettings[this.materialIndex].backgroundColor = index;
+      this.myCanvas().addBackgroundColor(
+        this.project.getColorValueByIndex(index)
+      );
     },
     setAllOver() {
       if (!this.curSettings().image) {
@@ -561,7 +633,7 @@ export default defineComponent({
       await this.materialGroups[this.materialIndex].uploadImage(
         this.colorCount
       );
-      console.log('project.separated_colors:', this.project.separated_colors)
+      console.log("project.separated_colors:", this.project.separated_colors);
       // this.$forceUpdate()
     },
   },
@@ -611,7 +683,7 @@ export default defineComponent({
 }
 
 .color-btns {
-  @apply flex;
+  @apply flex flex-wrap;
 }
 
 .color-btn {

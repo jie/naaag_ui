@@ -1,27 +1,19 @@
+const colors = require('tailwindcss/colors')
+
+colors.knitx = {
+  borderGray: '#F6F6F6',
+  bgGray: '#F6F6F6'
+}
+
+
 module.exports = {
   content: [
     "./index.html",
     "./src/**/*.{vue,js,ts,jsx,tsx}"
   ],
   theme: {
+    colors: colors,
     extend: {},
-  },
-  daisyui: {
-    themes: [
-      {
-        mytheme: {
-          "primary": "#1d4ed8",
-          "secondary": "#F000B8",
-          "accent": "#37CDBE",
-          "neutral": "#3D4451",
-          "base-100": "#FFFFFF",
-          "info": "#3ABFF8",
-          "success": "#36D399",
-          "warning": "#FBBD23",
-          "error": "#F87272"
-        },
-      },
-    ],
   },
   plugins: []
 }

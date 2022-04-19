@@ -1,0 +1,11 @@
+<svg id="Color_Use" data-name="Color Use" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+  <g id="Rectangle" fill="#fff" stroke="#a0a0a0" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="1">
+    <rect width="32" height="32" stroke="none"/>
+    <rect x="0.5" y="0.5" width="31" height="31" fill="none"/>
+  </g>
+  <path id="Path" d="M30,0,0,30" transform="translate(1 1)" fill="none" stroke="#a03532" stroke-miterlimit="10" stroke-width="1"/>
+  <g id="Rectangle-2" data-name="Rectangle" fill="none" stroke="#a0a0a0" stroke-miterlimit="10" stroke-width="1">
+    <rect width="32" height="32" stroke="none"/>
+    <rect x="0.5" y="0.5" width="31" height="31" fill="none"/>
+  </g>
+</svg>

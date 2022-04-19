@@ -1,0 +1,17 @@
+<svg id="View_List" data-name="View List" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+  <g id="Path_Copy_2" data-name="Path Copy 2" transform="translate(6 21)" fill="none" stroke-linejoin="round" stroke-miterlimit="10">
+    <path d="M0,1A1,1,0,0,1,1,0H4A1,1,0,0,1,5,1V4A1,1,0,0,1,4,5H1A1,1,0,0,1,0,4Z" stroke="none"/>
+    <path d="M 1 1 L 1 4 L 4 4 L 4 1 L 1 1 M 1 0 L 4 0 C 4.552279949188232 0 5 0.4477200508117676 5 1 L 5 4 C 5 4.552279949188232 4.552279949188232 5 4 5 L 1 5 C 0.4477200508117676 5 0 4.552279949188232 0 4 L 0 1 C 0 0.4477200508117676 0.4477200508117676 0 1 0 Z" stroke="none" fill="#000"/>
+  </g>
+  <rect id="Rectangle" width="13" height="1" rx="0.5" transform="translate(13 23)"/>
+  <g id="Path_Copy_2-2" data-name="Path Copy 2" transform="translate(6 13.5)" fill="none" stroke-linejoin="round" stroke-miterlimit="10">
+    <path d="M0,1A1,1,0,0,1,1,0H4A1,1,0,0,1,5,1V4A1,1,0,0,1,4,5H1A1,1,0,0,1,0,4Z" stroke="none"/>
+    <path d="M 1 1 L 1 4 L 4 4 L 4 1 L 1 1 M 1 0 L 4 0 C 4.552279949188232 0 5 0.4477200508117676 5 1 L 5 4 C 5 4.552279949188232 4.552279949188232 5 4 5 L 1 5 C 0.4477200508117676 5 0 4.552279949188232 0 4 L 0 1 C 0 0.4477200508117676 0.4477200508117676 0 1 0 Z" stroke="none" fill="#000"/>
+  </g>
+  <rect id="Rectangle-2" data-name="Rectangle" width="13" height="1" rx="0.5" transform="translate(13 15.5)"/>
+  <g id="Path_Copy_2-3" data-name="Path Copy 2" transform="translate(6 6)" fill="none" stroke-linejoin="round" stroke-miterlimit="10">
+    <path d="M0,1A1,1,0,0,1,1,0H4A1,1,0,0,1,5,1V4A1,1,0,0,1,4,5H1A1,1,0,0,1,0,4Z" stroke="none"/>
+    <path d="M 1 1 L 1 4 L 4 4 L 4 1 L 1 1 M 1 0 L 4 0 C 4.552279949188232 0 5 0.4477200508117676 5 1 L 5 4 C 5 4.552279949188232 4.552279949188232 5 4 5 L 1 5 C 0.4477200508117676 5 0 4.552279949188232 0 4 L 0 1 C 0 0.4477200508117676 0.4477200508117676 0 1 0 Z" stroke="none" fill="#000"/>
+  </g>
+  <rect id="Rectangle-3" data-name="Rectangle" width="13" height="1" rx="0.5" transform="translate(13 8)"/>
+</svg>

@@ -1,29 +1,32 @@
 
 
 import Material from "./material"
+import Project from "./project"
+import Color from "./color"
 import Realibox from "@/utils/realibox";
 import { dataURLtoFile } from "@/utils/image_tools";
 import { nanoid } from "nanoid";
-import { getAccessToken, colorSeparation, changeColor } from "@/utils/color_api"
-
+import { getAccessToken, colorSeparation, colorSeparationDirect, changeColor } from "@/utils/color_api"
+import { uploadRequestDeco } from "./api_tools"
 
 const RealiboxImageSize = [2048, 2048]
 
 class MaterialGroup {
-  constructor(group_name, project, raw_materials = [], rules = [], canvas = "") {
+  constructor(group_name, raw_materials = [], mask = "") {
     this.group_name = group_name
     this.raw_materials = raw_materials
-    this.project = project
-    this.rules = rules
+    this.mask_prefixes = mask.prefixes || []
+    this.mask = mask
     this.materials = []
-    this.canvas = canvas
+    // this.context = context
+    // this.canvas = context.$refs[`canvas-com-${group_name}`][0]
     this.realiboxApiOptions = {
       base_url: import.meta.env.VITE_APP_REALIBOX_HOST,
       appkey: import.meta.env.VITE_APP_REALIBOX_APPKEY,
       secret: import.meta.env.VITE_APP_REALIBOX_SECRET,
     }
+
     /*上传给realibox的图片*/
-    this.img_before_separated_src = ""
     this.img_url = ""
     this.img_uid = ""
     this.img_cache = {}
@@ -31,15 +34,30 @@ class MaterialGroup {
     /* 原始图片 */
     this.image_src = ""
     this.image_file = ""
-  
+
     /* 单独上传分色后的图片 */
-    this.separated_img_key = ""
+    this.separated_origin_data = ""
+    this.separated_data = ""
 
     this.color_codes = []
     this.color_codes_str = ""
     this.color_count = ""
     this.changed_codes = []
+    this.canvas_settings = {
+      width: "",
+      height: "",
+      x: "",
+      y: "",
+      angle: "",
+      is_transparent: false,
+      originWidth: "",
+      originHeight: "",
+      backgroundColor: "",
+      image: "",
+      imageFile: ""
+    }
 
+    this.user_colors = []
   }
 
   addMaterial(material) {
@@ -50,52 +68,137 @@ class MaterialGroup {
     this.canvas = canvas
   }
 
-  async uploadImage(color_count) {
+  async uploadImage(color_num = 4, size = "") {
+    let project = Project.getInstance()
+    let image_file = this.canvas_settings.imageFile
+    let image_url = this.canvas_settings.image_url
+    if (!size) {
+      size = [this.canvas_settings.originWidth, this.canvas_settings.originHeight]
+    }
+    let colorRes;
+    if (project.user_colors.length === 0) {
+      colorRes = await this.requestColorSeparation(image_file, color_num, "", size)
+    } else {
+      let project_user_colors = []
+      project.user_colors.map((item) => {
+        project_user_colors.push(item.code_name)
+      })
+      colorRes = await this.requestColorSeparation(image_file, "", project_user_colors, size)
+    }
+
+    if (!colorRes.status) {
+      alert('fail_color_separation')
+      return
+    }
+    // let colorRes = {"color_codes": "['NV704', 'NV900B', 'NV733', 'NV706']", "image_url": "https://cloud-cube-us2.s3.amazonaws.com/y8bun47nf5du/public/b30edd960a67f6330ed889bd09d1eff2726a614b1833890f.jpg", "bmp_image_url": "https://cloud-cube-us2.s3.amazonaws.com/y8bun47nf5du/public/bd80fa73ae2d91dd7d213c25822d5285e24c3c73988e1aeb.bmp", "image_key": "bd80fa73ae2d91dd7d213c25822d5285e24c3c73988e1aeb", "new_km_codes_type": "<class 'numpy.ndarray'>"}
+    // colorRes = { 'data': colorRes }
+    if (project.user_colors.length === 0) {
+      this.separated_origin_data = colorRes.data;
+      project.generateUserColors(colorRes)
+      // update all group user_colors
+      project.material_groups.map((item) => {
+        item.generateUserColors(colorRes)
+      })
+    }
+    this.separated_data = colorRes.data
+    // this.canvas_settings.image = image_url;
+    // this.canvas_settings.imageFile = image_file;
+    this.img_url = colorRes.data.image_url
+    return colorRes
+  }
+
+  setAllOverImage(context) {
+    let project = Project.getInstance()
+    project.material_groups.map((item) => {
+      if (item.group_name !== this.group_name && item.mask.has_image) {
+        item.separated_data = {...this.separated_data}
+        item.canvas_settings.image = this.canvas_settings.image;
+        item.canvas_settings.imageFile = this.canvas_settings.imageFile;
+        item.img_url = this.img_url
+        context.$refs[`canvas-com-${item.group_name}`][0].onUploadFileChange(
+          this.img_url
+        );
+      }
+    });
+  }
+  setAllOverBg(context) {
+    if (this.canvas_settings.backgroundColor === "") {
+      alert('backgroundColor required')
+      return
+    }
+    let project = Project.getInstance()
+    let rgb_color = project.getColorValueByIndex(this.canvas_settings.backgroundColor)
+    project.material_groups.map((item) => {
+      if (item.group_name !== this.group_name && item.mask.has_bg) {
+        item.canvas_settings.backgroundColor = this.canvas_settings.backgroundColor
+        context.$refs[`canvas-com-${item.group_name}`][0].addBackgroundColor(rgb_color)
+      }
+    });
+  }
+
+  generateUserColors(color_res, colorCodeMap) {
+    let color_codes = []
+    if(colorCodeMap) {
+      let origin_codes = eval(this.separated_origin_data.color_codes)
+      for(let item of origin_codes) {
+        color_codes.push(colorCodeMap[item])
+      }
+      console.log('origin_codes:', origin_codes)
+    } else {
+      color_codes = eval(color_res.data.color_codes)
+    }
+    let user_colors = []
     
-    var imageSrc = await this.canvas.onExportImage();
-    // 预览分色前的图片
-    this.img_before_separated_src = imageSrc
-    console.log('img_before_separated_src:', this.img_before_separated_src)
-    //如果不使用分色需要设置realibox布片的图片尺寸为2048
-    // var imageSrc = await this.canvas.exportDataWithSize('jpeg', 2048, 2048)
+    console.log('color_codes:', color_codes)
+    color_codes.map((item) => {
+      user_colors.push(new Color(item, Project.getInstance().colors[item]))
+    })
 
-    var filename = `${nanoid()}.png`
-    var imageFile = dataURLtoFile(imageSrc, filename)
+    this.color_codes = color_codes
+    this.user_colors = user_colors
+    this.color_count = user_colors.length
+  }
 
-    // 先查看缓存中是否有数据
-    // if(color_codes_str && this.image_src && imageSrc === this.image_src) {
-    //   this.img_cache[color_codes_str] = 
-    //   if(this.img_cache[this.color_codes_str]) {
+  async uploadCanvasImage(canvas) {
+    if (!this.img_url) {
+      return {status: false, data: "img_url_not_set"}
+    }
 
-    //   }
-    // }
+    if (this.canvas_settings.backgroundColor === "") {
+      return {status: false, data: "background_not_set"}
+    }
 
-    let colorRes = await this.requestColorSeparation(color_count, imageFile)
+    let bg_color = Project.getInstance().color_codes.find((item, index) => {
+      return this.canvas_settings.backgroundColor === index
+    })
+
+    let imageSrc = await canvas.onExportFromSeparationImage(this.canvas_settings.image);
+
+    let filename = `${nanoid()}.png`
+    let imageFile = dataURLtoFile(imageSrc, filename)
+
+    let color_count = this.user_colors.length + 1
+    let direct_colors = [bg_color.name, ...this.user_colors.map(item => item.code_name)]
+
+    let colorRes = await this.requestColorSeparation(imageFile, color_count, direct_colors, RealiboxImageSize)
     if (!colorRes.status) {
       return colorRes
     }
 
     let tmp_image_src = await this.generateImageFile(colorRes.data.image_url, RealiboxImageSize[0], RealiboxImageSize[1])
+    console.log('tmp_image_src---')
+    console.log(tmp_image_src)
     var tmp_name = `${nanoid()}.png`
     var tmp_image_file = dataURLtoFile(tmp_image_src, tmp_name)
 
     let uploadRes = await this.requestUploadImage(tmp_image_file)
-    if (uploadRes.status) {
-      this.img_uid = uploadRes.data.img_uid
-      this.img_url = uploadRes.data.img_url
-    } else {
-      this.img_uid = ""
-      this.img_url = uploadRes.data.img_url
+    if(!uploadRes.status) {
+      return uploadRes
     }
+    this.img_uid = uploadRes.data.img_uid
+    return uploadRes
   }
-  /* 在调用完分色后设置当前group的颜色参数 */
-  updateMaterialColors(colorRes) {
-    this.project.generateSeparatedColorCode(colorRes.data.color_codes_values)
-    this.color_codes = colorRes.data.color_codes_values
-    this.color_codes_str = JSON.stringify(this.project.separated_colors)
-    this.img_cache[this.color_codes_str] = colorRes.data
-    this.color_count = colorRes.data.color_codes_values.length
-  }
+
   async generateImageFile(image_src, width, height) {
     return new Promise(async (resolve, reject) => {
       var img = document.createElement("img");
@@ -114,77 +217,73 @@ class MaterialGroup {
   }
 
 
-  async requestChangeColor(image_key, codes) {
+  async requestChangeColor(codes) {
     let tokenRes = await getAccessToken()
     if (!tokenRes.status) {
       return tokenRes
     }
-    console.log('tokenRes:', tokenRes)
     let headers = {
       Authorization: `Bearer ${tokenRes.data.access_token}`,
     };
 
     let params = {
       user_id: 'vm',
-      image_key: image_key,
-      new_materical_group: this.project.fabric_name,
-      new_material_codes: codes
+      image_key: this.separated_origin_data.image_key,
+      new_materical_group: Project.getInstance().fabric_name,
+      new_material_codes: codes,
+      width: this.canvas_settings.originWidth,
+      height: this.canvas_settings.originHeight
     }
 
     let result = await changeColor(params, headers);
     if (!result.status) {
       return result
     }
-    console.log('result:', result)
-    let changed_codes = []
-    this.color_codes.map((item) => {
-      changed_codes.push(codes[item])
-    })
-    this.changed_codes = changed_codes
-    console.log('img_url:', this.img_url)
-    this.img_url = result.data.image_url
-    console.log('result.data.image_url:', result.data.image_url)
-    // this.separated_img_key = result.data.image_key
     return result
   }
 
-  async requestColorSeparation(color_count, image_file, target_codes) {
+  async requestColorSeparation(image_file, color_num, direct_colors, size) {
     let tokenRes = await getAccessToken()
     if (!tokenRes.status) {
       return tokenRes
     }
-    console.log('tokenRes:', tokenRes)
     let headers = {
       Authorization: `Bearer ${tokenRes.data.access_token}`,
     };
 
     let params = {
-      color_num: color_count,
+      color_num: color_num,
       image: image_file,
-      material_group: this.project.fabric_name,
+      material_group: Project.getInstance().fabric_name,
       color_mode: 2,
       use_img_url: 1,
-      // width: 311,
-      // height: 234,
-      get_masks: 1,
+      get_masks: 0,
       user_id: 'vm',
-    }
-    if(target_codes) {
-      params = {...params, direct_colors: target_codes}
+      width: size[0],
+      height: size[1],
+      bmp_width: 750,
+      bmp_height: 750,
     }
 
-    let result = await colorSeparation(params, headers);
-    if (!result.status) {
-      return result
+    let result;
+    if (direct_colors) {
+      params.direct_colors = direct_colors
+      result = await colorSeparationDirect(params, headers);
+    } else {
+      params.color_num = color_num
+      result = await colorSeparation(params, headers);
     }
-    console.log('result:', result)
     return result
   }
 
   async requestUploadImage(image_file) {
+    if (!Project.getInstance().copy_project_id) {
+      await Project.getInstance().createProjectCopy()
+    }
+
     let api = new Realibox(this.realiboxApiOptions)
     var policyRes = await api.getPolicy({
-      name: image_file.name, project_id: this.project.project_id
+      name: image_file.name, project_id: Project.getInstance().copy_project_id
     })
     if (!policyRes.status) {
       return policyRes
@@ -194,43 +293,40 @@ class MaterialGroup {
   }
 
   generateMaterials() {
-    for (let rule of this.rules) {
+    for (let prefix of this.mask_prefixes) {
       var materials = this.raw_materials.filter((item) => {
-        return item.name.startsWith(rule.name)
+        return item.name.startsWith(prefix)
       })
-      if (materials) {
-        var materialObjs = []
+      if (materials.length !== 0) {
         materials.map((item) => {
-          materialObjs.push(new Material(item.name, rule.has_bg, rule.has_image, { ...item }))
+          this.materials.push(new Material(item.name, this.mask.has_bg, this.mask.has_image, item))
         })
-        this.materials = [...this.materials, ...materialObjs]
       }
     }
   }
 
-  generateSimulationData(byImgId = true) {
+  generateSimulationData() {
     let simulation_data = []
-    if (this.img_uid) {
-      this.materials.map((item) => {
-        var item_data = {
-          name: item.name
-        }
-        if (byImgId === true) {
-          item_data['img_uid'] = this.img_uid
-        } else {
-          item_data['img_url'] = this.img_url
-          // item_data['img_url'] = this.img_url+'?x-oss-process=image/resize,m_pad,h_2048,w_2048'
-        }
+    this.materials.map((item) => {
+      var item_data = {
+        name: item.name,
+        ao_map: "null",
+        normal_map: "null"
 
-        simulation_data.push(item_data)
-      })
-    }
+      }
+      if (this.img_uid) {
+        item_data['img_uid'] = this.img_uid
+      } else {
+        item_data['color'] = Project.getInstance().getColorValueByIndex(this.canvas_settings.backgroundColor)
+      }
 
+      simulation_data.push(item_data)
+    })
     return simulation_data
   }
 
   toString() {
-    return '(group-' + this.group.group_name + ')';
+    return '(group-' + this.group_name + ')';
   }
 }
 

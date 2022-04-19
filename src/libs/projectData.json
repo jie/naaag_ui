@@ -1,4 +1,58 @@
+[{
+  "project_id": "36174",
+  "silhouette_id": "VCOE2200069Testing",
+  "fbx_name": "VCOE2200069Testing",
+  "model_url": "https://cbrb3d.knitup.io/lifung-knitup?lang=en&id=d3417fbfd1eb2d2e74fa75ec321e276f4ae1d02c",
+  "image_url": "/static/material/example_cloth.png",
+  "masks": [{
+      "mask_url": "/static/material/knUP2200069/BODY-F.png",
+      "name": "BODY-F"
+    },
+    {
+      "mask_url": "/static/material/knUP2200069/BODY-B.png",
+      "name": "BODY-B"
+    },
+    {
+      "mask_url": "/static/material/knUP2200069/SELVE-L.png",
+      "thumb_url": "/static/material/knUP2200069/SELVE-L-thumb.png",
+      "name": "BODY-SL"
+    },
+    {
+      "mask_url": "/static/material/knUP2200069/SELVE-R.png",
+      "thumb_url": "/static/material/knUP2200069/SELVE-R-thumb.png",
+      "name": "BODY-SR"
+    },
+    {
+      "mask_url": "/static/material/knUP2200069/TRIM.png",
+      "name": "TRIM"
+    }
+  ]
+},
 {
-    "project_id": "",
-    "silhouette_id": ""
-}
+  "project_id": "36176",
+  "silhouette_id": "VCOE2200072Testing",
+  "fbx_name": "VCOE2200072Testing",
+  "model_url": "https://cbrb3d.knitup.io/lifung-knitup?lang=en&id=c34bcfc8202da05db06ad4fa4d3b9a775b58fe05",
+  "image_url": "/static/material/example_cloth.png",
+  "masks": [{
+      "mask_url": "/static/material/knUP2200072/BODY-F.png",
+      "name": "BODY-F"
+    },
+    {
+      "mask_url": "/static/material/knUP2200072/BODY-B.png",
+      "name": "BODY-B"
+    },
+    {
+      "mask_url": "/static/material/knUP2200072/SELVE-L.png",
+      "name": "BODY-SL"
+    },
+    {
+      "mask_url": "/static/material/knUP2200072/SELVE-R.png",
+      "name": "BODY-SR"
+    },
+    {
+      "mask_url": "/static/material/knUP2200072/TRIM.png",
+      "name": "TRIM"
+    }
+  ]
+}]

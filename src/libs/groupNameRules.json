@@ -1,77 +1,75 @@
 [{
     "name": "Front",
+    "key": "BODY-F",
     "mask_url": "",
+    "has_bg": true,
+    "has_image": true,
     "materials": [{
-        "name": "BODY-F",
-        "has_bg": true,
-        "has_image": true
+        "name": "BODY-F"
       }
     ]
   },
   {
     "name": "Back",
+    "key": "BODY-B",
     "mask_url": "",
+    "has_bg": true,
+    "has_image": true,
     "materials": [{
-      "name": "BODY-B",
-      "has_bg": true,
-      "has_image": true
+      "name": "BODY-B"
     }]
   },
   {
     "name": "Left Selve",
+    "key": "BODY-SL",
     "mask_url": "",
+    "has_bg": true,
+    "has_image": true,
     "materials": [{
-      "name": "BODY-SL",
-      "has_bg": true,
-      "has_image": true
+      "name": "BODY-SL"
     }]
   },
   {
     "name": "Right Selve",
+    "key": "BODY-SR",
     "mask_url": "",
+    "has_bg": true,
+    "has_image": true,
     "materials": [{
-      "name": "BODY-SR",
-      "has_bg": true,
-      "has_image": true
+      "name": "BODY-SR"
     }]
   },
   {
     "name": "Trims",
+    "key": "TRIM",
     "mask_url": "",
+    "has_bg": true,
+    "has_image": false,
     "materials": [{
-        "name": "RIB-F",
-        "has_bg": true,
-        "has_image": false
+        "name": "RIB"
       },
       {
-        "name": "FNL",
-        "has_bg": true,
-        "has_image": false
+        "name": "FNL"
       },
       {
-        "name": "TUBULAR-PLACKET",
-        "has_bg": true,
-        "has_image": false
+        "name": "TUBULAR-PLACKET"
       },
       {
-        "name": "BODY-POCKET",
-        "has_bg": true,
-        "has_image": false
+        "name": "BODY-POCKET"
       },
       {
-        "name": "JSY-POCKET",
-        "has_bg": true,
-        "has_image": false
+        "name": "JSY-POCKET"
       }
     ]
   },
   {
     "name": "HOOD",
+    "key": "HOOD",
     "mask_url": "",
+    "has_bg": true,
+    "has_image": true,
     "materials": [{
-      "name": "BODY-HOOD",
-      "has_bg": true,
-      "has_image": true
+      "name": "BODY-HOOD"
     }]
   }
 ]

@@ -56,8 +56,76 @@ const getMaterials = async function (params, headers = {}) {
   return result
 }
 
+
+const colorSeparationDirect = async function (params, headers = {}, progress_callback = "") {
+  let { image, material_group, color_mode, use_img_url, width, height, get_masks, direct_colors, bmp_width, bmp_height } = params
+
+  let formData = new FormData();
+  formData.append("image", image);
+  formData.append("user_id", AuthSettings.user_id);
+  formData.append("material_group", material_group);
+  formData.append("color_mode", color_mode);
+  formData.append("direct_colors", JSON.stringify(direct_colors));
+  formData.append("n_color", direct_colors.length);
+
+  if (use_img_url) {
+    formData.append("use_img_url", use_img_url);
+  }
+  if (width) {
+    formData.append("width", width);
+  }
+  if (height) {
+    formData.append("height", height);
+  }
+  if (bmp_width) {
+    formData.append("bmp_width", bmp_width);
+  }
+  if (bmp_height) {
+    formData.append("bmp_height", bmp_height);
+  }
+  if (get_masks) {
+    formData.append("get_masks", get_masks);
+  }
+
+  let url = `${BaseURL}/color_separation_direct`
+  let config = {
+    headers: { ...headers },
+    transformRequest: [function (data) {
+      return data
+    }],
+    onUploadProgress: progressEvent => {
+      let complete = (progressEvent.loaded / progressEvent.total * 100 | 0) + '%'
+      console.log('complete:', complete)
+      if (progress_callback) {
+        progress_callback((progressEvent.loaded / progressEvent.total * 100 | 0))
+      }
+    }
+  };
+
+  let uploadRes;
+  try {
+    uploadRes = await axios.post(url, formData, config)
+    if (uploadRes.status != 200) {
+      console.log('uploadErrorStatus:', uploadRes.status)
+      return {
+        status: false,
+        data: 'color_api_upload_status_error'
+      }
+    }
+  } catch (e) {
+    console.error('uploadError:', e)
+    return {
+      status: false,
+      data: 'color_api_error'
+    }
+  }
+
+  return uploadRes
+}
+
+
 const colorSeparation = async function (params, headers = {}, progress_callback = "") {
-  let { color_num, image, material_group, color_mode, use_img_url, width, height, get_masks } = params
+  let { color_num, image, material_group, color_mode, use_img_url, width, height, bmp_width, bmp_height, get_masks } = params
   const colorCountMap = {
     2: "two",
     3: "three",
@@ -77,6 +145,12 @@ const colorSeparation = async function (params, headers = {}, progress_callback 
   }
   if (height) {
     formData.append("height", height);
+  }
+  if (bmp_width) {
+    formData.append("bmp_width", bmp_width);
+  }
+  if (bmp_height) {
+    formData.append("bmp_height", bmp_height);
   }
   if (get_masks) {
     formData.append("get_masks", get_masks);
@@ -119,12 +193,19 @@ const colorSeparation = async function (params, headers = {}, progress_callback 
 }
 
 const changeColor = async function (params, headers = {}) {
-  let { image_key, new_materical_group, new_material_codes } = params
+  let { image_key, new_materical_group, new_material_codes, width, height, get_masks } = params
   let formData = new FormData();
-  formData.append("image_key", image_key);
+  formData.append("color_separation_id", image_key);
   formData.append("user_id", AuthSettings.user_id);
   formData.append("new_materical_group", new_materical_group);
   formData.append("new_material_codes", JSON.stringify(new_material_codes));
+  formData.append("width", width);
+  formData.append("height", height);
+  formData.append("use_img_url", 1);
+  formData.append("bmp_width", params.width);
+  formData.append("bmp_height", params.height);
+  formData.append("get_masks", '1');
+
 
   let url = `${BaseURL}/change_color`
   let config = {
@@ -159,5 +240,6 @@ export {
   getAccessToken,
   getMaterials,
   colorSeparation,
+  colorSeparationDirect,
   changeColor
 }

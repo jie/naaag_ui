@@ -24,7 +24,6 @@
       :id="canvasId"
       :height="canvasWidth"
       :width="canvasWidth"
-      style="border: 1px solid #000"
     ></canvas>
   </div>
 </template>
@@ -153,6 +152,7 @@ export default {
       imageCoe: "",
       // current upload image object, only one on on canvas
       imageObject: "",
+      imageCoe: "",
     };
   },
   mounted() {
@@ -195,12 +195,11 @@ export default {
         var canvas = markRaw(new fabric.Canvas(this.canvasId));
         this.canvases.push(canvas);
         var bg = "rgb(0,0,0)";
-        console.log("bg:", rgb2hex(bg));
         // this.addBackgroundColor(rgb2hex(bg));
+
         this.addOverlayImage(this.overlayImage);
 
         canvas.on("object:modified", (options) => {
-          console.log("modified:", options, ", do:", this.operate);
           if (this.operate == "do") {
             this.operation_history.set(JSON.stringify(canvas));
             let t = canvas.getActiveObject();
@@ -216,25 +215,20 @@ export default {
           }
         });
         canvas.on("object:added", (options) => {
-          console.log("add:", options, ", do:", this.operate);
           if (this.operate == "do") {
             this.operation_history.set(JSON.stringify(canvas));
           }
         });
         canvas.on("object:removed", (options) => {
-          console.log("deleted:", options, ", do:", this.operate);
           if (this.operate == "do") {
             this.setRemoveImage();
             this.operation_history.set(JSON.stringify(canvas));
           }
         });
 
-        canvas.on("object:scaled", (options) => {
-          console.log("scale: operate:", operate);
-        });
+        canvas.on("object:scaled", (options) => {});
 
         canvas.on("selection:created", (options) => {
-          console.log("selected:", options, ", do:", this.operate);
           let t = canvas.getActiveObject();
           this.$emit("setImageProperties", {
             x: t.left,
@@ -265,7 +259,6 @@ export default {
     addOverlayImage(url, opacity = 1) {
       var target = this.currentCanvas();
       return new Promise((resolve) => {
-        console.log("addOverlayImage:", url);
         target.setOverlayImage(
           url,
           () => {
@@ -276,7 +269,6 @@ export default {
             target.renderAll();
             this.originCanvasData.push(JSON.stringify(target));
             this.operation_history.set(JSON.stringify(target));
-            console.log("step3");
             resolve();
           },
           {
@@ -318,7 +310,6 @@ export default {
         return;
       }
       var data = this.operation_history.prev();
-      console.log("data:", data);
       if (data) {
         this.currentCanvas().loadFromJSON(JSON.parse(data), () => {
           this.operate = "do";
@@ -343,7 +334,6 @@ export default {
         return;
       }
       var data = this.operation_history.next();
-      console.log("data:", data);
       if (data) {
         this.currentCanvas().loadFromJSON(JSON.parse(data), () => {
           this.operate = "do";
@@ -383,11 +373,46 @@ export default {
       });
     },
 
+    get_img_width(img) {
+      return parseFloat(img.width * img.scaleX).toFixed(2);
+    },
+
+    get_img_height(img) {
+      return parseFloat(img.height * img.scaleY).toFixed(2);
+    },
+
+    async replaceImage(url) {
+      const img = this.currentCanvas().getObjects()[0];
+      return new Promise(async (resolve, reject) => {
+        img.setSrc(url, async (target) => {
+          target.setCoords();
+          this.currentCanvas().renderAll();
+          resolve();
+        });
+      });
+    },
+
+    async onExportFromSeparationImage(url, type = "jpeg") {
+      await this.removeOverlayImage();
+      const img = this.currentCanvas().getObjects()[0];
+      let curSrc = img.getSrc();
+      return new Promise(async (resolve, reject) => {
+        img.setSrc(url, async (target) => {
+          target.setCoords();
+          this.currentCanvas().renderAll();
+          var image = this.currentCanvas().toDataURL(type);
+          await this.replaceImage(curSrc)
+          await this.addOverlayImage(this.overlayImage);
+          resolve(image);
+        });
+      });
+    },
 
     async exportDataWithSize(format, width, height) {
-      let imgdata = await this.onExportImage(format)
+      let imgdata = await this.onExportImage(format);
       return new Promise(async (resolve, reject) => {
         var img = document.createElement("img");
+        img.setAttribute("crossOrigin",'Anonymous')
         img.onload = function () {
           var tmpCanvas = document.createElement("canvas");
           var tmpCtx = tmpCanvas.getContext("2d");
@@ -400,8 +425,24 @@ export default {
         img.src = imgdata;
       });
     },
-
-
+    async exportFileWithSize(format, width, height) {
+      let imgdata = await this.onExportImage(format);
+      return new Promise(async (resolve, reject) => {
+        var img = document.createElement("img");
+        img.setAttribute("crossOrigin",'Anonymous')
+        img.onload = function () {
+          var tmpCanvas = document.createElement("canvas");
+          var tmpCtx = tmpCanvas.getContext("2d");
+          tmpCanvas.width = width;
+          tmpCanvas.height = height;
+          tmpCtx.drawImage(this, 0, 0, width, height);
+          tmpCanvas.toBlob((blob) => {
+            resolve(window.URL.createObjectURL(blob));
+          })
+        };
+        img.src = imgdata;
+      });
+    },
     onClickAddImage() {
       document.getElementById("btn_file").click();
     },
@@ -410,7 +451,9 @@ export default {
         url,
         (img) => {
           var coe = UserUploadImageSizeCoe;
+          console.log("mywidth:", img.width);
           var imageCoe = ((this.canvasWidth * coe) / img.width).toFixed(2);
+          this.imageCoe = imageCoe;
           img.scale(imageCoe);
           img.left = this.canvasWidth / 2 - (img.width * imageCoe) / 2;
           img.top = this.canvasWidth / 2 - (img.height * imageCoe) / 2;
@@ -418,12 +461,8 @@ export default {
           img.crossOrigin = "Anonymous";
           img.setCoords();
           this.currentCanvas().add(img).setActiveObject(img);
-          console.log("currentCanvas:");
-          console.log(this.currentCanvas());
           let t = this.currentCanvas().getActiveObject();
           if (this.imageObject) {
-            console.log("will remove:", this.imageObject);
-            console.log(this.currentCanvas().getObjects());
             for (let o of this.currentCanvas().getObjects()) {
               if (this.imageObject.cacheKey === o.cacheKey) {
                 this.currentCanvas().remove(o);
@@ -432,6 +471,7 @@ export default {
             }
           }
           this.imageObject = t;
+          console.log("imageObject:", this.imageObject);
           this.$emit("setImageProperties", {
             x: t.left,
             y: t.top,
@@ -453,9 +493,7 @@ export default {
       if (settings.userResources) {
         if (data.objects) {
           for (let item of data.objects) {
-            console.log("item:", item);
             for (let ur of settings.userResources) {
-              console.log("ur:", ur);
               if (ur.blobid === item.src) {
                 item.src = ur.url;
                 break;
@@ -480,7 +518,6 @@ export default {
       });
     },
     textChanged(e) {
-      console.log(e);
       this.addText({
         text: e.text,
         size: this.signatureFontSize.selection[e.size].value,
@@ -578,13 +615,13 @@ export default {
       this.operation_history.set(JSON.stringify(this.currentCanvas()));
     },
     setCenterH() {
-      this.currentCanvas().centerObjectV(
+      this.currentCanvas().centerObjectH(
         this.currentCanvas().getActiveObject()
       );
       this.operation_history.set(JSON.stringify(this.currentCanvas()));
     },
     setCenterV() {
-      this.currentCanvas().centerObjectH(
+      this.currentCanvas().centerObjectV(
         this.currentCanvas().getActiveObject()
       );
       this.operation_history.set(JSON.stringify(this.currentCanvas()));

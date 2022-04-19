@@ -1,0 +1,14 @@
+<svg id="Fill" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+  <g id="Path" transform="translate(6 6)" fill="none" stroke-linejoin="round" stroke-miterlimit="10">
+    <path d="M0,1A1,1,0,0,1,1,0H19a1,1,0,0,1,1,1V19a1,1,0,0,1-1,1H1a1,1,0,0,1-1-1Z" stroke="none"/>
+    <path d="M 1 1 L 1 19 L 19 19 L 19 1 L 1 1 M 1 0 L 19 0 C 19.55228042602539 0 20 0.4477195739746094 20 1 L 20 19 C 20 19.55228042602539 19.55228042602539 20 19 20 L 1 20 C 0.4477195739746094 20 0 19.55228042602539 0 19 L 0 1 C 0 0.4477195739746094 0.4477195739746094 0 1 0 Z" stroke="none" fill="#000"/>
+  </g>
+  <path id="Path_Copy" data-name="Path Copy" d="M2.83,2.827,0,0" transform="translate(11.84 11.84)" fill="none" stroke="#000" stroke-linecap="round" stroke-miterlimit="10" stroke-width="1"/>
+  <path id="Rectangle" d="M0,.2A.2.2,0,0,1,.2,0H3.517a.2.2,0,0,1,.141.341L.341,3.659A.2.2,0,0,1,0,3.517Z" transform="translate(10 10)"/>
+  <path id="Path_Copy-2" data-name="Path Copy" d="M2.83-2.827,0,0" transform="translate(11.84 20.16)" fill="none" stroke="#000" stroke-linecap="round" stroke-miterlimit="10" stroke-width="1"/>
+  <path id="Rectangle-2" data-name="Rectangle" d="M0-.2A.2.2,0,0,0,.2,0H3.517a.2.2,0,0,0,.141-.341L.341-3.659A.2.2,0,0,0,0-3.517Z" transform="translate(10 22)"/>
+  <path id="Path_Copy-3" data-name="Path Copy" d="M2.83,2.827,0,0" transform="translate(20.16 11.84) rotate(90)" fill="none" stroke="#000" stroke-linecap="round" stroke-miterlimit="10" stroke-width="1"/>
+  <path id="Rectangle-3" data-name="Rectangle" d="M0,.2A.2.2,0,0,1,.2,0H3.517a.2.2,0,0,1,.141.341L.341,3.659A.2.2,0,0,1,0,3.517Z" transform="translate(22 10) rotate(90)"/>
+  <path id="Path_Copy-4" data-name="Path Copy" d="M2.83-2.827,0,0" transform="translate(20.16 20.16) rotate(-90)" fill="none" stroke="#000" stroke-linecap="round" stroke-miterlimit="10" stroke-width="1"/>
+  <path id="Rectangle-4" data-name="Rectangle" d="M0-.2A.2.2,0,0,0,.2,0H3.517a.2.2,0,0,0,.141-.341L.341-3.659A.2.2,0,0,0,0-3.517Z" transform="translate(22 22) rotate(-90)"/>
+</svg>

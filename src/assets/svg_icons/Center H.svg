@@ -1,0 +1,14 @@
+<svg id="Center_H" data-name="Center H" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+  <g id="Group" transform="translate(6.5 13.5)">
+    <path id="Path" d="M6.5.5H0" transform="translate(0 2)" fill="none" stroke="#000" stroke-linecap="round" stroke-miterlimit="10" stroke-width="1"/>
+    <path id="Shape_Copy" data-name="Shape Copy" d="M3.729,2.332a.2.2,0,0,1,0,.339L.306,4.809A.2.2,0,0,1,0,4.639V.361A.2.2,0,0,1,.306.191Z" transform="translate(3.5)"/>
+  </g>
+  <g id="Group_Copy" data-name="Group Copy" transform="translate(25.5 13.5)">
+    <path id="Path-2" data-name="Path" d="M-6.5.5H0" transform="translate(0 2)" fill="none" stroke="#000" stroke-linecap="round" stroke-miterlimit="10" stroke-width="1"/>
+    <path id="Shape_Copy-2" data-name="Shape Copy" d="M-3.729,2.332a.2.2,0,0,0,0,.339L-.306,4.809A.2.2,0,0,0,0,4.639V.361A.2.2,0,0,0-.306.191Z" transform="translate(-3.5)"/>
+  </g>
+  <g id="Rectangle" transform="translate(15.5 6)" fill="none" stroke="#000" stroke-miterlimit="10" stroke-width="1">
+    <rect width="1" height="20" rx="0.5" stroke="none"/>
+    <rect x="0.5" y="0.5" height="19" fill="none"/>
+  </g>
+</svg>

@@ -1,0 +1,6 @@
+<svg id="Undo" xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40">
+  <g id="Group" transform="translate(8 8)">
+    <path id="Path" d="M0,0H14.86A9.137,9.137,0,0,1,24,9.14v.39a9.137,9.137,0,0,1-9.14,9.14H4.16" transform="translate(0 5.33)" fill="none" stroke="#000" stroke-linecap="round" stroke-miterlimit="10" stroke-width="1"/>
+    <path id="Path-2" data-name="Path" d="M5.33,10.66,0,5.33,5.33,0" transform="translate(0 0)" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="1"/>
+  </g>
+</svg>

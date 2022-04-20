@@ -18,23 +18,27 @@ export default defineConfig({
         "rewrite": path => path.replace(/^\/api/, ''),
         "changeOrigin": true
       },
-
       '/realBoxApi': {
         'target': 'https://home.knitup.io',
         'changeOrigin': true,
+      },
+      '/colorSeparationApi': {
+        'target': "https://color-sep.herokuapp.com",
+        'changeOrigin': true,
+        "rewrite": path => path.replace(/^\/colorSeparationApi/, '')
       },
       '/stripe': {
         'target': 'https://home.knitup.io',
         'changeOrigin': true,
       },
-      '/color_separation': {
-        'target': 'https://liyang-api-beta.explorium.cn',
-        'changeOrigin': true
-      },
-      '/colorsep': {
-        'target': 'https://liyang-api-beta.explorium.cn',
-        'changeOrigin': true
-      }
+      // '/color_separation': {
+      //   'target': 'https://liyang-api-beta.explorium.cn',
+      //   'changeOrigin': true
+      // },
+      // '/colorsep': {
+      //   'target': 'https://liyang-api-beta.explorium.cn',
+      //   'changeOrigin': true
+      // }
     }
   }
 })

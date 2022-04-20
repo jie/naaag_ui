@@ -79,8 +79,10 @@ class Project {
     })
 
     if (this.projectMaskData.length === 0) {
+      alert('project_data_not_foud')
       return
     }
+    console.log('projectMaskData:', this.projectMaskData)
 
 
     this.projectMaskData.masks.map((mask, index) => {
@@ -149,14 +151,15 @@ class Project {
   }
   async getColors() {
     // let tokenRes = await getAccessToken()
+    // console.log('tokenRes:', tokenRes)
     // if (!tokenRes.status) {
     //   return tokenRes
     // }
     // let headers = {
-    //   Authorization: `Bearer ${tokenRes.data.access_token}`,
+    //   Authorization: `Bearer ${tokenRes.data.data.access_token}`,
     // };
 
-    // let materialsRes = await getMaterials({}, headers)
+    // let materialsRes = await getMaterials({material_group: this.fabric_name}, headers)
     let materialsRes = { status: true, data: materialColorData.data }
     if (!materialsRes.status) {
       return materialsRes
@@ -174,12 +177,13 @@ class Project {
   }
 
   async createProjectCopy() {
-    let project_name = `${this.projectData.name}[copy-${nanoid(8)}]`
+    let project_name = `${this.projectMaskData.fbx_name}[copy-${nanoid(8)}]`
     let result = await this.realibox.copyProject(project_name, this.project_id)
     if (result.data.code == 10000) {
       this.copy_project_id = result.data.info.id
       this.copy_project_name = project_name
-      // let copyMaterialRes = await this.realibox.getMaterial({ project_id: this.copy_project_id, limit: 1000 })
+      let copyMaterialRes = await this.realibox.getMaterial({ project_id: this.copy_project_id, limit: 1000 })
+      console.log('copyMaterialRes:', copyMaterialRes)
     }
   }
 
@@ -225,6 +229,10 @@ class Project {
       const taskResult = await task();
       taskResults.push(taskResult);
     }
+    console.log('taskResults:', taskResults)
+    return {
+      status: true
+    }
   }
 
   async preview3d() {
@@ -236,6 +244,7 @@ class Project {
       materials = [...materials, ...item.generateSimulationData()]
     })
     let result = await this.realibox.sceneSimulation(this.copy_project_id, materials)
+    return result
   }
 }
 

@@ -315,7 +315,7 @@
                         </div>
                       </div>
                     </div>
-                    <div class="operate btn flex items-center pl-8">
+                    <div class="operate btn flex items-center pl-8" v-if="materialGroups[materialIndex].user_colors.length === 0">
                       <div class="flex flex-1">
                         <div>Reset</div>
                       </div>
@@ -714,9 +714,21 @@ export default defineComponent({
         alert(`${mg} is not set background`);
         return;
       }
-      await this.project.uploadImages(this);
+      let uploadRes = await this.project.uploadImages(this);
+      if(!uploadRes.status) {
+        alert(`upload_image_fail`)
+        return
+      }
       let result = await this.project.preview3d();
-      // if(result.data)
+      if(result.data.code !== 10000) {
+        alert('preview3d_fail')
+        return
+      }
+      var modelUrl = result.data.info.preview_url;
+      if (!modelUrl.startsWith("https:")) {
+        modelUrl = `https:${modelUrl}`;
+        window.open(modelUrl)
+      }
     },
     onColorCountChange(e) {},
     async setColorSeparation() {

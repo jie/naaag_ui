@@ -2,7 +2,8 @@ import axios from 'axios'
 import API from "@/services/http_service";
 
 
-const BaseURL = '/color_separation'
+const BaseURL = '/colorSeparationApi'
+// const BaseURL = '/color_separation'
 
 const AuthSettings = {
   "user_id": "vm"
@@ -44,16 +45,63 @@ const httpRequest = async (url, method = 'POST', params = {}) => {
 }
 
 const getAccessToken = async function (params, headers = {}) {
-  let api = new API("/colorsep/api/get_access_token");
-  let result = await api.request({});
-  return result
+  let api_url = `${BaseURL}/login`;
+  let result;
+  try {
+    result = await axios.post(api_url, {
+      username: import.meta.env.VITE_APP_COLORSEP_USER_ID,
+      password: import.meta.env.VITE_APP_COLORSEP_PASSWORD
+    })
+    if (result.status != 200) {
+      console.log('getAccessTokenStatus:', result.status)
+      return {
+        status: false,
+        data: 'color_api_getAccessToken_status_error'
+      }
+    }
+  } catch (e) {
+    console.error('getAccessTokenError:', e)
+    return {
+      status: false,
+      data: 'color_api_get_access_token_error'
+    }
+  }
+
+  return {status: true, data: result}
 }
 
 
 const getMaterials = async function (params, headers = {}) {
-  let api = new API("/colorsep/api/get_materials");
-  let result = await api.request({});
-  return result
+  let api_url = `${BaseURL}/materials`;
+
+  let formData = new FormData();
+  formData.append("material_group", params.material_group);
+  formData.append("user_id", AuthSettings.user_id);
+
+  let config = {
+    headers: { ...headers },
+  };
+  console.log('config:', config)
+
+  let result;
+  try {
+    result = await axios.post(api_url, formData, config)
+    if (result.status != 200) {
+      console.log('GetMaterialsErrorStatus:', result.status)
+      return {
+        status: false,
+        data: 'color_api_materials_status_error'
+      }
+    }
+  } catch (e) {
+    console.error('getMaterialsError:', e)
+    return {
+      status: false,
+      data: 'color_api_get_materials_error'
+    }
+  }
+
+  return {status: true, data: result}
 }
 
 

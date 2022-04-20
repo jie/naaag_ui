@@ -186,8 +186,8 @@ class MaterialGroup {
     }
 
     let tmp_image_src = await this.generateImageFile(colorRes.data.image_url, RealiboxImageSize[0], RealiboxImageSize[1])
-    console.log('tmp_image_src---')
-    console.log(tmp_image_src)
+    // console.log('tmp_image_src---')
+    // console.log(tmp_image_src)
     var tmp_name = `${nanoid()}.png`
     var tmp_image_file = dataURLtoFile(tmp_image_src, tmp_name)
 
@@ -223,7 +223,7 @@ class MaterialGroup {
       return tokenRes
     }
     let headers = {
-      Authorization: `Bearer ${tokenRes.data.access_token}`,
+      Authorization: `Bearer ${tokenRes.data.data.access_token}`,
     };
 
     let params = {
@@ -248,7 +248,7 @@ class MaterialGroup {
       return tokenRes
     }
     let headers = {
-      Authorization: `Bearer ${tokenRes.data.access_token}`,
+      Authorization: `Bearer ${tokenRes.data.data.access_token}`,
     };
 
     let params = {
@@ -309,10 +309,7 @@ class MaterialGroup {
     let simulation_data = []
     this.materials.map((item) => {
       var item_data = {
-        name: item.name,
-        ao_map: "null",
-        normal_map: "null"
-
+        name: item.name
       }
       if (this.img_uid) {
         item_data['img_uid'] = this.img_uid
